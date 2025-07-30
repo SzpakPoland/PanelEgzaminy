@@ -2,9 +2,9 @@ package service;
 
 import model.Question;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,7 +17,8 @@ public class FileReader {
     public static List<Question> readQuestions(String filePath) throws IOException {
         List<Question> questions = new ArrayList<>();
 
-        try (BufferedReader reader = Files.newBufferedReader(Paths.get(filePath))) {
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(new FileInputStream(filePath), "UTF-8"))) {
             String line;
 
             while ((line = reader.readLine()) != null) {

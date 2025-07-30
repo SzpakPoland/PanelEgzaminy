@@ -25,9 +25,10 @@ public class Test {
     }
 
     private void calculateMaxPoints() {
-        this.maxPoints = questions.stream()
-            .mapToInt(Question::getMaxPoints)
-            .sum();
+        this.maxPoints = 0;
+        for (Question question : questions) {
+            this.maxPoints += question.getMaxPoints();
+        }
     }
 
     public void addQuestion(Question question) {
@@ -83,4 +84,3 @@ public class Test {
             name, questions.size(), maxPoints);
     }
 }
-

@@ -2,6 +2,7 @@ package ui;
 
 import model.Question;
 import model.Test;
+import model.TestResult;
 import service.TestProcessor;
 import javax.swing.*;
 import java.awt.*;
@@ -84,7 +85,7 @@ public class TestPanel extends JPanel {
         }
 
         int errors = (Integer) errorsSpinner.getValue();
-        var result = testProcessor.calculateResult(currentTest, answers, errors);
+        TestResult result = testProcessor.calculateResult(currentTest, answers, errors);
         resultPanel.displayResult(result);
     }
 

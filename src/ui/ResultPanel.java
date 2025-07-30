@@ -5,60 +5,57 @@ import javax.swing.*;
 import java.awt.*;
 
 public class ResultPanel extends JPanel {
-    private JLabel pointsLabel;
+    private JLabel resultLabel;
     private JLabel percentageLabel;
-    private JLabel errorsLabel;
+    private JLabel pointsLabel;
 
     public ResultPanel() {
         initializeComponents();
         setupLayout();
-        reset();
     }
 
     private void initializeComponents() {
-        pointsLabel = new JLabel();
-        percentageLabel = new JLabel();
-        errorsLabel = new JLabel();
+        resultLabel = new JLabel("Brak wyniku");
+        percentageLabel = new JLabel("");
+        pointsLabel = new JLabel("");
 
-        Font boldFont = new Font(Font.SANS_SERIF, Font.BOLD, 14);
-        pointsLabel.setFont(boldFont);
-        percentageLabel.setFont(boldFont);
-        errorsLabel.setFont(boldFont);
+        resultLabel.setFont(resultLabel.getFont().deriveFont(Font.BOLD, 16f));
     }
 
     private void setupLayout() {
-        setLayout(new GridLayout(3, 1, 5, 5));
-        setBorder(BorderFactory.createTitledBorder("Wyniki"));
+        setLayout(new GridLayout(3, 1));
+        setBorder(BorderFactory.createTitledBorder("Wynik"));
 
-        add(pointsLabel);
-        add(errorsLabel);
+        add(resultLabel);
         add(percentageLabel);
+        add(pointsLabel);
     }
 
     public void displayResult(TestResult result) {
-        pointsLabel.setText(String.format("Punkty: %d / %d",
-            result.getTotalPoints(), result.getMaxPoints()));
-
-        errorsLabel.setText(String.format("Błędy: %d", result.getErrors()));
-
-        percentageLabel.setText(String.format("Wynik procentowy: %.1f%%",
-            result.getPercentage()));
-
-        // Kolorowanie wyniku
-        if (result.getPercentage() >= 75) {
-            percentageLabel.setForeground(Color.GREEN.darker());
-        } else if (result.getPercentage() >= 50) {
-            percentageLabel.setForeground(Color.ORANGE.darker());
+        // Założenie: test zaliczony jeśli procent >= 75%
+        if (result.getPercentage() >= 75.0) {
+            resultLabel.setText("ZALICZONY");
+            resultLabel.setForeground(Color.GREEN);
         } else {
-            percentageLabel.setForeground(Color.RED);
+            resultLabel.setText("NIEZALICZONY");
+            resultLabel.setForeground(Color.RED);
         }
+
+        percentageLabel.setText(String.format("Procent: %.1f%%", result.getPercentage()));
+
+        // Oblicz punkty na podstawie procentu i maksymalnych punktów
+        int currentPoints = (int) Math.round(result.getMaxPoints() * result.getPercentage() / 100.0);
+        pointsLabel.setText(String.format("Punkty: %d/%d",
+                currentPoints, result.getMaxPoints()));
+
+        repaint();
     }
 
     public void reset() {
-        pointsLabel.setText("Punkty: - / -");
-        errorsLabel.setText("Błędy: -");
-        percentageLabel.setText("Wynik procentowy: -%");
-        percentageLabel.setForeground(Color.BLACK);
+        resultLabel.setText("Brak wyniku");
+        resultLabel.setForeground(Color.BLACK);
+        percentageLabel.setText("");
+        pointsLabel.setText("");
+        repaint();
     }
 }
-

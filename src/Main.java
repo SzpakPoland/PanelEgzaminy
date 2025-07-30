@@ -1,18 +1,27 @@
-package src;
-
-import ui.MainWindow;
+import ui.ExamPanel;
 import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
-        SwingUtilities.invokeLater(() -> {
-            new MainWindow().setVisible(true);
+                JFrame frame = new JFrame("Panel Egzaminów");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setSize(800, 600);
+                frame.setLocationRelativeTo(null);
+
+                ExamPanel examPanel = new ExamPanel();
+                frame.add(examPanel);
+
+                frame.setVisible(true);
+            }
         });
     }
 }
