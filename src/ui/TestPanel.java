@@ -13,6 +13,7 @@ public class TestPanel extends JPanel {
     private Test currentTest;
     private Map<Question, JCheckBox> questionCheckBoxes;
     private JSpinner errorsSpinner;
+    private JSpinner extraPointsSpinner;
     private JButton calculateButton;
     private TestProcessor testProcessor;
     private ResultPanel resultPanel;
@@ -25,6 +26,7 @@ public class TestPanel extends JPanel {
 
     private void initializeComponents() {
         errorsSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
+        extraPointsSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
         calculateButton = new JButton("Oblicz wynik");
 
         calculateButton.addActionListener(e -> calculateResults());
@@ -59,10 +61,13 @@ public class TestPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(questionsPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 
-        // Panel z błędami i przyciskiem
+        // Panel z błędami, dodatkowymi punktami i przyciskiem
         JPanel bottomPanel = new JPanel(new FlowLayout());
         bottomPanel.add(new JLabel("Liczba błędów:"));
         bottomPanel.add(errorsSpinner);
+        bottomPanel.add(Box.createHorizontalStrut(20));
+        bottomPanel.add(new JLabel("Dodatkowe punkty:"));
+        bottomPanel.add(extraPointsSpinner);
         bottomPanel.add(calculateButton);
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
@@ -85,7 +90,8 @@ public class TestPanel extends JPanel {
         }
 
         int errors = (Integer) errorsSpinner.getValue();
-        TestResult result = testProcessor.calculateResult(currentTest, answers, errors);
+        int extraPoints = (Integer) extraPointsSpinner.getValue();
+        TestResult result = testProcessor.calculateResultWithExtraPoints(currentTest, answers, errors, extraPoints);
         resultPanel.displayResult(result);
     }
 

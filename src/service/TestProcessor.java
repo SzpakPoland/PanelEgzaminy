@@ -21,5 +21,17 @@ public class TestProcessor {
 
         return new TestResult(totalPoints, maxPoints, errors);
     }
-}
 
+    public TestResult calculateResultWithExtraPoints(Test test, Map<Question, Boolean> answers, int errors, int extraPoints) {
+        TestResult baseResult = calculateResult(test, answers, errors);
+
+        // Oblicz bazowe punkty
+        int basePoints = (int) Math.round(baseResult.getPercentage() * test.getMaxPoints() / 100.0);
+        int newTotalPoints = basePoints + extraPoints;
+
+        // Nowe maksimum to oryginalne maksimum + dodatkowe punkty
+        int newMaxPoints = test.getMaxPoints() + extraPoints;
+
+        return new TestResult(newTotalPoints, newMaxPoints, errors);
+    }
+}
