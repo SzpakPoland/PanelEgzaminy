@@ -5,23 +5,34 @@ import model.Test;
 import model.TestResult;
 import service.TestProcessor;
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TestPanel extends JPanel {
     private Test currentTest;
-    private Map<Question, JCheckBox> questionCheckBoxes;
+    private Map<Question, JSpinner> questionSpinners;
     private JSpinner errorsSpinner;
     private JSpinner extraPointsSpinner;
     private JButton calculateButton;
     private TestProcessor testProcessor;
     private ResultPanel resultPanel;
 
+    // Kolory aplikacji - uspójnione i przejrzyste
+    private static final Color PRIMARY_COLOR = new Color(52, 90, 138);
+    private static final Color SECONDARY_COLOR = new Color(248, 250, 252);
+    private static final Color ACCENT_COLOR = new Color(79, 123, 178);
+    private static final Color CARD_COLOR = Color.WHITE;
+    private static final Color TEXT_COLOR = new Color(33, 37, 41);
+    private static final Color BORDER_COLOR = new Color(206, 212, 218);
+    private static final Color SUCCESS_COLOR = new Color(34, 139, 34);
+
     public TestPanel() {
-        questionCheckBoxes = new HashMap<>();
+        questionSpinners = new HashMap<>();
         initializeComponents();
         setupLayout();
+        styleComponents();
     }
 
     private void initializeComponents() {
@@ -33,45 +44,83 @@ public class TestPanel extends JPanel {
     }
 
     private void setupLayout() {
-        setLayout(new BorderLayout());
-        setBorder(BorderFactory.createTitledBorder("Pytania testowe"));
+        setLayout(new BorderLayout(15, 15));
+        setBorder(BorderFactory.createTitledBorder(
+            BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
+            "Pytania testowe",
+            0, 0, new Font("Segoe UI", Font.BOLD, 15), PRIMARY_COLOR));
+        setBackground(SECONDARY_COLOR);
+    }
+
+    private void styleComponents() {
+        setBackground(SECONDARY_COLOR);
+
+        // Stylizacja spinnerów - lepszy kontrast
+        styleSpinner(errorsSpinner);
+        styleSpinner(extraPointsSpinner);
+
+        // Stylizacja przycisku oblicz - bardziej wyrazisty
+        calculateButton.setBackground(SUCCESS_COLOR);
+        calculateButton.setForeground(Color.BLACK);
+        calculateButton.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        calculateButton.setFocusPainted(false);
+        calculateButton.setBorder(BorderFactory.createEmptyBorder(12, 24, 12, 24));
+        calculateButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Hover efekt
+        calculateButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                calculateButton.setBackground(new Color(28, 115, 28));
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                calculateButton.setBackground(SUCCESS_COLOR);
+            }
+        });
+    }
+
+    private void styleSpinner(JSpinner spinner) {
+        spinner.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        spinner.setPreferredSize(new Dimension(80, 32));
+        spinner.setBackground(CARD_COLOR);
+        spinner.setBorder(BorderFactory.createLineBorder(BORDER_COLOR, 1));
+        JComponent editor = spinner.getEditor();
+        if (editor instanceof JSpinner.DefaultEditor) {
+            JTextField textField = ((JSpinner.DefaultEditor) editor).getTextField();
+            textField.setHorizontalAlignment(JTextField.CENTER);
+            textField.setBackground(CARD_COLOR);
+            textField.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
+        }
     }
 
     public void loadTest(Test test) {
         this.currentTest = test;
-        questionCheckBoxes.clear();
+        questionSpinners.clear();
         removeAll();
 
-        JPanel mainPanel = new JPanel(new BorderLayout());
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBackground(SECONDARY_COLOR);
 
         // Panel z pytaniami
         JPanel questionsPanel = new JPanel();
         questionsPanel.setLayout(new BoxLayout(questionsPanel, BoxLayout.Y_AXIS));
+        questionsPanel.setBackground(SECONDARY_COLOR);
 
         for (Question question : test.getQuestions()) {
-            JCheckBox checkBox = new JCheckBox(
-                    String.format("%s (Punkty: %d)",
-                            question.getQuestionText(), question.getMaxPoints()));
-            checkBox.setSelected(true); // Domyślnie zaznaczone jako poprawne
-            questionCheckBoxes.put(question, checkBox);
-            questionsPanel.add(checkBox);
-            questionsPanel.add(Box.createVerticalStrut(5));
+            JPanel questionCard = createQuestionCard(question);
+            questionsPanel.add(questionCard);
+            questionsPanel.add(Box.createVerticalStrut(8));
         }
 
         JScrollPane scrollPane = new JScrollPane(questionsPanel);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        scrollPane.getViewport().setBackground(SECONDARY_COLOR);
 
-        // Panel z błędami, dodatkowymi punktami i przyciskiem
-        JPanel bottomPanel = new JPanel(new FlowLayout());
-        bottomPanel.add(new JLabel("Liczba błędów:"));
-        bottomPanel.add(errorsSpinner);
-        bottomPanel.add(Box.createHorizontalStrut(20));
-        bottomPanel.add(new JLabel("Dodatkowe punkty:"));
-        bottomPanel.add(extraPointsSpinner);
-        bottomPanel.add(calculateButton);
+        // Panel kontrolny
+        JPanel controlPanel = createControlPanel();
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
-        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        mainPanel.add(controlPanel, BorderLayout.SOUTH);
 
         add(mainPanel, BorderLayout.CENTER);
 
@@ -79,19 +128,88 @@ public class TestPanel extends JPanel {
         repaint();
     }
 
+    private JPanel createQuestionCard(Question question) {
+        JPanel card = new JPanel(new BorderLayout(15, 10));
+        card.setBackground(CARD_COLOR);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            new EmptyBorder(18, 20, 18, 20)
+        ));
+
+        JLabel questionLabel = new JLabel(
+            String.format("<html><div style='width:500px; font-family: Segoe UI; color: #000000;'>%s</div></html>",
+            question.getQuestionText()));
+        questionLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        questionLabel.setForeground(Color.BLACK);
+
+        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        rightPanel.setBackground(CARD_COLOR);
+
+        JLabel maxLabel = new JLabel(String.format("Max: %d", question.getMaxPoints()));
+        maxLabel.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        maxLabel.setForeground(Color.BLACK);
+
+        JSpinner pointsSpinner = new JSpinner(
+            new SpinnerNumberModel(question.getMaxPoints(), 0, question.getMaxPoints(), 0.5));
+        styleSpinner(pointsSpinner);
+
+        JLabel pktLabel = new JLabel("pkt");
+        pktLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
+        pktLabel.setForeground(Color.BLACK);
+
+        rightPanel.add(maxLabel);
+        rightPanel.add(Box.createHorizontalStrut(12));
+        rightPanel.add(pointsSpinner);
+        rightPanel.add(pktLabel);
+
+        card.add(questionLabel, BorderLayout.CENTER);
+        card.add(rightPanel, BorderLayout.EAST);
+
+        questionSpinners.put(question, pointsSpinner);
+        return card;
+    }
+
+    private JPanel createControlPanel() {
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 18));
+        panel.setBackground(CARD_COLOR);
+        panel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(BORDER_COLOR, 1),
+            new EmptyBorder(15, 25, 15, 25)
+        ));
+
+        JLabel errorsLabel = new JLabel("Błędy:");
+        errorsLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        errorsLabel.setForeground(Color.BLACK);
+
+        JLabel extraLabel = new JLabel("Dodatkowe punkty:");
+        extraLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        extraLabel.setForeground(Color.BLACK);
+
+        panel.add(errorsLabel);
+        panel.add(errorsSpinner);
+        panel.add(Box.createHorizontalStrut(30));
+        panel.add(extraLabel);
+        panel.add(extraPointsSpinner);
+        panel.add(Box.createHorizontalStrut(30));
+        panel.add(calculateButton);
+
+        return panel;
+    }
+
     private void calculateResults() {
         if (currentTest == null || testProcessor == null || resultPanel == null) {
             return;
         }
 
-        Map<Question, Boolean> answers = new HashMap<>();
-        for (Map.Entry<Question, JCheckBox> entry : questionCheckBoxes.entrySet()) {
-            answers.put(entry.getKey(), entry.getValue().isSelected());
+        Map<Question, Double> partialAnswers = new HashMap<>();
+        for (Map.Entry<Question, JSpinner> entry : questionSpinners.entrySet()) {
+            double points = ((Number) entry.getValue().getValue()).doubleValue();
+            partialAnswers.put(entry.getKey(), points);
         }
 
         int errors = (Integer) errorsSpinner.getValue();
         int extraPoints = (Integer) extraPointsSpinner.getValue();
-        TestResult result = testProcessor.calculateResultWithExtraPoints(currentTest, answers, errors, extraPoints);
+        TestResult result = testProcessor.calculateResultWithPartialPoints(currentTest, partialAnswers, errors, extraPoints);
         resultPanel.displayResult(result);
     }
 

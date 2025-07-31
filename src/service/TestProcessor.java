@@ -34,4 +34,24 @@ public class TestProcessor {
 
         return new TestResult(newTotalPoints, newMaxPoints, errors);
     }
+
+    public TestResult calculateResultWithPartialPoints(Test test, Map<Question, Double> partialAnswers, int errors, int extraPoints) {
+        double totalPoints = 0.0;
+
+        // Sumuj częściowe punkty za każde pytanie
+        for (Map.Entry<Question, Double> entry : partialAnswers.entrySet()) {
+            totalPoints += entry.getValue();
+        }
+
+        // Odejmij błędy od wyniku
+        totalPoints = Math.max(0, totalPoints - errors);
+
+        // Dodaj dodatkowe punkty
+        totalPoints += extraPoints;
+
+        // Nowe maksimum to oryginalne maksimum + dodatkowe punkty
+        int newMaxPoints = test.getMaxPoints() + extraPoints;
+
+        return new TestResult((int) Math.round(totalPoints), newMaxPoints, errors);
+    }
 }
