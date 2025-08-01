@@ -1,12 +1,12 @@
 package model;
 
 public class TestResult {
-    private int totalPoints;
-    private int maxPoints;
+    private double totalPoints;
+    private double maxPoints;
     private int errors;
     private double percentage;
 
-    public TestResult(int totalPoints, int maxPoints, int errors) {
+    public TestResult(double totalPoints, double maxPoints, int errors) {
         this.totalPoints = totalPoints;
         this.maxPoints = maxPoints;
         this.errors = errors;
@@ -15,18 +15,18 @@ public class TestResult {
 
     private void calculatePercentage() {
         if (maxPoints > 0) {
-            this.percentage = (double) totalPoints / maxPoints * 100;
+            this.percentage = totalPoints / maxPoints * 100;
         } else {
             this.percentage = 0;
         }
     }
 
-    public int getTotalPoints() { return totalPoints; }
-    public int getMaxPoints() { return maxPoints; }
+    public double getTotalPoints() { return totalPoints; }
+    public double getMaxPoints() { return maxPoints; }
     public int getErrors() { return errors; }
     public double getPercentage() { return percentage; }
 
-    public void setTotalPoints(int totalPoints) {
+    public void setTotalPoints(double totalPoints) {
         this.totalPoints = totalPoints;
         calculatePercentage();
     }
@@ -37,4 +37,3 @@ public class TestResult {
         calculatePercentage();
     }
 }
-

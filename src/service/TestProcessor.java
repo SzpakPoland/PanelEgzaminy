@@ -3,6 +3,7 @@ package service;
 import model.Question;
 import model.Test;
 import model.TestResult;
+import service.ScoreCalculator;
 import java.util.Map;
 
 public class TestProcessor {
@@ -19,7 +20,7 @@ public class TestProcessor {
         // Odejmij błędy od wyniku
         totalPoints = Math.max(0, totalPoints - errors);
 
-        return new TestResult(totalPoints, maxPoints, errors);
+        return new TestResult((double) totalPoints, (double) maxPoints, errors);
     }
 
     public TestResult calculateResultWithExtraPoints(Test test, Map<Question, Boolean> answers, int errors, int extraPoints) {
@@ -32,7 +33,7 @@ public class TestProcessor {
         // Nowe maksimum to oryginalne maksimum + dodatkowe punkty
         int newMaxPoints = test.getMaxPoints() + extraPoints;
 
-        return new TestResult(newTotalPoints, newMaxPoints, errors);
+        return new TestResult((double) newTotalPoints, (double) newMaxPoints, errors);
     }
 
     public TestResult calculateResultWithPartialPoints(Test test, Map<Question, Double> partialAnswers, int errors, int extraPoints) {
@@ -50,8 +51,8 @@ public class TestProcessor {
         totalPoints += extraPoints;
 
         // Nowe maksimum to oryginalne maksimum + dodatkowe punkty
-        int newMaxPoints = test.getMaxPoints() + extraPoints;
+        double newMaxPoints = test.getMaxPoints() + extraPoints;
 
-        return new TestResult((int) Math.round(totalPoints), newMaxPoints, errors);
+        return new TestResult(totalPoints, newMaxPoints, errors);
     }
 }

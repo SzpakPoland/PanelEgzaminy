@@ -32,17 +32,17 @@ public class ResultPanel extends JPanel {
     }
 
     private void setupLayout() {
-        setLayout(new BorderLayout(15, 15));
+        setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
             "Wynik egzaminu",
-            0, 0, new Font("Segoe UI", Font.BOLD, 15), PRIMARY_COLOR));
+            0, 0, new Font("Segoe UI", Font.BOLD, 14), PRIMARY_COLOR));
 
-        JPanel resultCard = new JPanel(new GridLayout(3, 1, 8, 8));
+        JPanel resultCard = new JPanel(new GridLayout(3, 1, 5, 5));
         resultCard.setBackground(CARD_COLOR);
         resultCard.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(BORDER_COLOR, 1),
-            new EmptyBorder(25, 25, 25, 25)
+            new EmptyBorder(15, 20, 15, 20)
         ));
 
         resultCard.add(resultLabel);
@@ -50,14 +50,18 @@ public class ResultPanel extends JPanel {
         resultCard.add(pointsLabel);
 
         add(resultCard, BorderLayout.CENTER);
+
+        // Ustaw preferowaną wysokość
+        setPreferredSize(new Dimension(0, 120));
+        setMaximumSize(new Dimension(Integer.MAX_VALUE, 120));
     }
 
     private void styleComponents() {
         setBackground(SECONDARY_COLOR);
 
-        resultLabel.setFont(new Font("Segoe UI", Font.BOLD, 26));
-        percentageLabel.setFont(new Font("Segoe UI", Font.BOLD, 18));
-        pointsLabel.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        resultLabel.setFont(new Font("Segoe UI", Font.BOLD, 20));
+        percentageLabel.setFont(new Font("Segoe UI", Font.BOLD, 15));
+        pointsLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
 
         resultLabel.setForeground(Color.BLACK);
         percentageLabel.setForeground(Color.BLACK);
@@ -77,9 +81,8 @@ public class ResultPanel extends JPanel {
         percentageLabel.setText(String.format("Procent: %.1f%%", result.getPercentage()));
         percentageLabel.setForeground(Color.BLACK);
 
-        // Oblicz punkty na podstawie procentu i maksymalnych punktów
-        int currentPoints = (int) Math.round(result.getMaxPoints() * result.getPercentage() / 100.0);
-        pointsLabel.setText(String.format("Punkty: %d/%d", currentPoints, result.getMaxPoints()));
+        // Wyświetl punkty z uwzględnieniem połówek
+        pointsLabel.setText(String.format("Punkty: %.1f/%.1f", result.getTotalPoints(), result.getMaxPoints()));
         pointsLabel.setForeground(Color.BLACK);
 
         repaint();

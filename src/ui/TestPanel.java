@@ -44,11 +44,11 @@ public class TestPanel extends JPanel {
     }
 
     private void setupLayout() {
-        setLayout(new BorderLayout(15, 15));
+        setLayout(new BorderLayout(10, 10));
         setBorder(BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(PRIMARY_COLOR, 2),
             "Pytania testowe",
-            0, 0, new Font("Segoe UI", Font.BOLD, 15), PRIMARY_COLOR));
+            0, 0, new Font("Segoe UI", Font.BOLD, 14), PRIMARY_COLOR));
         setBackground(SECONDARY_COLOR);
     }
 
@@ -97,10 +97,10 @@ public class TestPanel extends JPanel {
         questionSpinners.clear();
         removeAll();
 
-        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        JPanel mainPanel = new JPanel(new BorderLayout(8, 8));
         mainPanel.setBackground(SECONDARY_COLOR);
 
-        // Panel z pytaniami
+        // Panel z pytaniami - większy
         JPanel questionsPanel = new JPanel();
         questionsPanel.setLayout(new BoxLayout(questionsPanel, BoxLayout.Y_AXIS));
         questionsPanel.setBackground(SECONDARY_COLOR);
@@ -108,7 +108,7 @@ public class TestPanel extends JPanel {
         for (Question question : test.getQuestions()) {
             JPanel questionCard = createQuestionCard(question);
             questionsPanel.add(questionCard);
-            questionsPanel.add(Box.createVerticalStrut(8));
+            questionsPanel.add(Box.createVerticalStrut(6));
         }
 
         JScrollPane scrollPane = new JScrollPane(questionsPanel);
@@ -116,8 +116,9 @@ public class TestPanel extends JPanel {
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.getViewport().setBackground(SECONDARY_COLOR);
 
-        // Panel kontrolny
+        // Panel kontrolny - mniejszy
         JPanel controlPanel = createControlPanel();
+        controlPanel.setPreferredSize(new Dimension(0, 80));
 
         mainPanel.add(scrollPane, BorderLayout.CENTER);
         mainPanel.add(controlPanel, BorderLayout.SOUTH);
@@ -170,27 +171,27 @@ public class TestPanel extends JPanel {
     }
 
     private JPanel createControlPanel() {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 18));
+        JPanel panel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         panel.setBackground(CARD_COLOR);
         panel.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createLineBorder(BORDER_COLOR, 1),
-            new EmptyBorder(15, 25, 15, 25)
+            new EmptyBorder(10, 20, 10, 20)
         ));
 
         JLabel errorsLabel = new JLabel("Błędy:");
-        errorsLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        errorsLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
         errorsLabel.setForeground(Color.BLACK);
 
         JLabel extraLabel = new JLabel("Dodatkowe punkty:");
-        extraLabel.setFont(new Font("Segoe UI", Font.BOLD, 14));
+        extraLabel.setFont(new Font("Segoe UI", Font.BOLD, 13));
         extraLabel.setForeground(Color.BLACK);
 
         panel.add(errorsLabel);
         panel.add(errorsSpinner);
-        panel.add(Box.createHorizontalStrut(30));
+        panel.add(Box.createHorizontalStrut(25));
         panel.add(extraLabel);
         panel.add(extraPointsSpinner);
-        panel.add(Box.createHorizontalStrut(30));
+        panel.add(Box.createHorizontalStrut(25));
         panel.add(calculateButton);
 
         return panel;

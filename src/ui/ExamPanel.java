@@ -42,12 +42,20 @@ public class ExamPanel extends JPanel {
         setLayout(new BorderLayout(15, 15));
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
         topPanel.setBackground(SECONDARY_COLOR);
         topPanel.add(loadFileButton);
 
+        // Główny panel z pytaniami i kontrolkami
+        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
+        centerPanel.setBackground(SECONDARY_COLOR);
+        centerPanel.add(testPanel, BorderLayout.CENTER);
+
+        // Mały panel wyników na dole
+        resultPanel.setPreferredSize(new Dimension(0, 120));
+
         add(topPanel, BorderLayout.NORTH);
-        add(testPanel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
         add(resultPanel, BorderLayout.SOUTH);
     }
 
